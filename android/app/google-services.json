@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "781484222896",
+    "firebase_url": "https://demochatapp-4ab1b-default-rtdb.firebaseio.com",
+    "project_id": "demochatapp-4ab1b",
+    "storage_bucket": "demochatapp-4ab1b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781484222896:android:804561bca305db0bbfce75",
+        "android_client_info": {
+          "package_name": "com.example.demo_chat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781484222896-0lec61f2mh0cavgnkdbnhn167p9rffd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDW-uKgIhY1lPCGuQfijNSyWe3FVhNeg1w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781484222896-0lec61f2mh0cavgnkdbnhn167p9rffd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
