@@ -13,69 +13,85 @@ class UserSelectPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Conversations'),
+        backgroundColor: Colors.indigo, // Change the app bar color
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.red, Colors.blue],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Colors.amber, Colors.indigo],
           ),
         ),
-        child: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('users').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-
-            final documents = snapshot.data!.docs;
-
-            return ListView.builder(
-              itemCount: documents.length,
-              itemBuilder: (context, index) {
-                final doc = documents[index];
-                final userId = doc.id;
-                final nickname = doc['nickname'] as String;
-                final photoUrl = doc['photoUrl'] as String;
-
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(photoUrl),
+        padding: const EdgeInsets.all(10.0),
+        child: Card(
+          color: Colors.white,
+          child: StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
-                  title: Text(nickname),
-                  onTap: () {
-                    final currentUserUid =
-                        FirebaseAuth.instance.currentUser!.uid;
-                    final users = [currentUserUid, userId];
-                    final otherUserNickname = nickname;
-
-                    // Create a new conversation and navigate to ChatPage
-                    FirebaseFirestore.instance.collection('conversations').add({
-                      'users': users,
-                      'otherUserNickname': otherUserNickname,
-                    }).then((docRef) {
-                      final conversationId = docRef.id;
-                      Navigator.pushNamed(
-                        context,
-                        ChatPage.routename,
-                        arguments: ChatPageArguments(
-                          conversationId: conversationId,
-                          users: users,
-                          otherUserNickname: otherUserNickname,
-                        ),
-                      );
-                    }).catchError((error) {
-                      // Handle error if conversation creation fails
-                      debugPrint('Error creating conversation: $error');
-                    });
-                  },
                 );
-              },
-            );
-          },
+              }
+
+              final documents = snapshot.data!.docs;
+
+              return ListView.builder(
+                itemCount: documents.length,
+                itemBuilder: (context, index) {
+                  final otherUser = documents[index];
+                  final otherUserUid = otherUser.id;
+                  final nickname = otherUser['nickname'] as String;
+                  final photoUrl = otherUser['photoUrl'] as String;
+
+                  return Card(
+                    color: Colors.white,
+                    elevation: 10,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(photoUrl),
+                        ),
+                        title: Text(
+                          otherUserUid,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        onTap: () {
+                          final currentUserUid =
+                              FirebaseAuth.instance.currentUser!.uid;
+                          final users = [currentUserUid, otherUser];
+
+                          // Create a new conversation and navigate to ChatPage
+                          String conversationId;
+                          if (currentUserUid.hashCode <=
+                              otherUserUid.hashCode) {
+                            conversationId = '$currentUserUid - $otherUserUid';
+                          } else {
+                            conversationId = '$otherUserUid - $currentUserUid';
+                          }
+
+                          Navigator.pushNamed(
+                            context,
+                            ChatPage.routename,
+                            arguments: ChatPageArguments(
+                              conversationId: conversationId,
+                              users: users,
+                              otherUserNickname: nickname,
+                            ),
+                          );
+                        }),
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );

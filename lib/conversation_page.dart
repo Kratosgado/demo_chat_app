@@ -22,10 +22,10 @@ class ConversationPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
-            onPressed: () {
-              FirebaseAuth.instance.signOut();
-              GoogleSignIn().signOut();
-              GoogleSignIn().disconnect();
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              await GoogleSignIn().signOut();
+              await GoogleSignIn().disconnect();
               Navigator.of(context).pushNamedAndRemoveUntil(
                   SigninPage.routename, (Route<dynamic> route) => false);
             },
@@ -65,7 +65,7 @@ class ConversationPage extends StatelessWidget {
                 final conversationId = doc.id;
                 final users = doc['users'] as List<dynamic>;
                 final otherUserUid = users.firstWhere(
-                    (uid) => uid != FirebaseAuth.instance.currentUser!.uid);
+                    (uid) => uid != FirebaseAuth.instance.currentUser!);
                 final otherUserNickname = doc['otherUserNickname'] as String;
 
                 // Retrieve last message sent in conversation
@@ -139,8 +139,7 @@ class ConversationPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            Navigator.pushNamed(context, ConversationPage.routename),
+        onPressed: () => Navigator.pushNamed(context, UserSelectPage.routename),
         child: const Icon(Icons.message),
       ),
     );
