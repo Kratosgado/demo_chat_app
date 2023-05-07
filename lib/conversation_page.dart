@@ -22,10 +22,10 @@ class ConversationPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.exit_to_app),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              await GoogleSignIn().signOut();
-              await GoogleSignIn().disconnect();
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+              GoogleSignIn().signOut();
+              GoogleSignIn().disconnect();
               Navigator.of(context).pushNamedAndRemoveUntil(
                   SigninPage.routename, (Route<dynamic> route) => false);
             },
@@ -67,6 +67,7 @@ class ConversationPage extends StatelessWidget {
                 final otherUserUid = users.firstWhere(
                     (uid) => uid != FirebaseAuth.instance.currentUser!);
                 final otherUserNickname = doc['otherUserNickname'] as String;
+                final peerDP = doc['peerDP'];
 
                 // Retrieve last message sent in conversation
                 return StreamBuilder<QuerySnapshot>(
@@ -124,10 +125,10 @@ class ConversationPage extends StatelessWidget {
                           context,
                           ChatPage.routename,
                           arguments: ChatPageArguments(
-                            conversationId: conversationId,
-                            users: users,
-                            otherUserNickname: otherUserNickname,
-                          ),
+                              conversationId: conversationId,
+                              users: users,
+                              otherUserNickname: otherUserNickname,
+                              peerPhoto: peerDP),
                         );
                       },
                     );

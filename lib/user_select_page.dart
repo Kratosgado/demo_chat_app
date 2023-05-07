@@ -57,7 +57,7 @@ class UserSelectPage extends StatelessWidget {
                           backgroundImage: NetworkImage(photoUrl),
                         ),
                         title: Text(
-                          otherUserUid,
+                          nickname,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -84,6 +84,7 @@ class UserSelectPage extends StatelessWidget {
                               conversationId: conversationId,
                               users: users,
                               otherUserNickname: nickname,
+                              peerPhoto: photoUrl,
                             ),
                           );
                         }),
