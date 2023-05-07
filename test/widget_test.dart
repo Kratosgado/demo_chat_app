@@ -9,11 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:demo_chat_app/main.dart';
+import 'package:demo_chat_app/settings/settings_controller.dart';
+import '../lib/settings/settings_service.dart';
+import '../lib/settings/settings_view.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    final settingsController = SettingsController(SettingsService());
+    await settingsController.loadSettings();
+    await tester.pumpWidget(MyApp(settingsController: settingsController));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
