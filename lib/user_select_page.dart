@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:demo_chat_app/chat_page.dart'; // Import the ChatPage
+import 'package:demo_chat_app/chat_page.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Import the ChatPage
 
 class UserSelectPage extends StatelessWidget {
   const UserSelectPage({super.key});
@@ -76,17 +77,24 @@ class UserSelectPage extends StatelessWidget {
                           } else {
                             conversationId = '$otherUserUid - $currentUserUid';
                           }
-
-                          Navigator.pushNamed(
-                            context,
-                            ChatPage.routename,
-                            arguments: ChatPageArguments(
-                              conversationId: conversationId,
-                              users: users,
-                              otherUserNickname: nickname,
-                              peerPhoto: photoUrl,
-                            ),
-                          );
+                          //create a field for the messages collection
+                          //will be used to select users in a conversation
+                          FirebaseFirestore.instance
+                              .collection('conversations')
+                              .doc(conversationId)
+                              .set({'users': users}).then((_) {
+                            Fluttertoast.showToast(msg: "new convo created");
+                            Navigator.pushNamed(
+                              context,
+                              ChatPage.routename,
+                              arguments: ChatPageArguments(
+                                conversationId: conversationId,
+                                users: users,
+                                otherUserNickname: nickname,
+                                peerPhoto: photoUrl,
+                              ),
+                            );
+                          });
                         }),
                   );
                 },

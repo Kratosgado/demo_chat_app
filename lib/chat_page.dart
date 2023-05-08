@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatPage extends StatefulWidget {
   static const routename = '/chatpage';
@@ -15,7 +16,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textEditingController = TextEditingController();
-  var peerName, peerDP, peerUid, conversationId;
+  var peerName, peerDP, peerUid, conversationId, users;
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _ChatPageState extends State<ChatPage> {
     peerDP = widget.arguments.peerPhoto;
     peerUid = widget.arguments.users[1];
     conversationId = widget.arguments.conversationId;
+    users = widget.arguments.users;
   }
 
   // Get the current user id
