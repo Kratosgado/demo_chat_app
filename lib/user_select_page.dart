@@ -49,41 +49,62 @@ class UserSelectPage extends StatelessWidget {
                   final photoUrl = otherUser['photoUrl'] as String;
 
                   return Card(
-                    color: Colors.white,
-                    elevation: 10,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(photoUrl),
-                        ),
-                        title: Text(
-                          nickname,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                      color: Colors.white,
+                      elevation: 10,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
+                      child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(photoUrl),
                           ),
-                        ),
-                        onTap: () {
-                          final currentUserUid =
-                              FirebaseAuth.instance.currentUser!.uid;
-                          final users = [currentUserUid, otherUser];
+                          title: Text(
+                            nickname,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          onTap: () {
+                            final currentUserUid =
+                                FirebaseAuth.instance.currentUser!.uid;
+                            final users = [currentUserUid, otherUser];
 
-                          // Create a new conversation and navigate to ChatPage
-                          String conversationId;
-                          if (currentUserUid.hashCode <=
-                              otherUserUid.hashCode) {
-                            conversationId = '$currentUserUid - $otherUserUid';
-                          } else {
-                            conversationId = '$otherUserUid - $currentUserUid';
-                          }
-                          //create a field for the messages collection
-                          //will be used to select users in a conversation
-                          FirebaseFirestore.instance
-                              .collection('conversations')
-                              .doc(conversationId)
-                              .set({'users': users}).then((_) {
-                            Fluttertoast.showToast(msg: "new convo created");
+                            // // Create a new conversation and navigate to ChatPage
+                            // FirebaseFirestore.instance
+                            //     .collection('conversations')
+                            //     .add({
+                            //   'users': users,
+                            //   'otherUserNickname': nickname,
+                            // }).then((docRef) {
+                            //   final conversationId = docRef.id;
+                            //   Navigator.pushNamed(
+                            //     context,
+                            //     ChatPage.routename,
+                            //     arguments: ChatPageArguments(
+                            //       conversationId: conversationId,
+                            //       users: users,
+                            //       otherUserNickname: nickname,
+                            //       peerPhoto: photoUrl,
+                            //     ),
+                            //   );
+                            // }).catchError((error) {
+                            //   // Handle error if conversation creation fails
+                            //   debugPrint('Error creating conversation: $error');
+                            // });
+
+                            // // Create a new conversation and navigate to ChatPage
+                            String conversationId;
+                            if (currentUserUid.hashCode <=
+                                otherUserUid.hashCode) {
+                              conversationId =
+                                  '$currentUserUid - $otherUserUid';
+                            } else {
+                              conversationId =
+                                  '$otherUserUid - $currentUserUid';
+                            }
+                            //create a field for the messages collection
+                            //will be used to select users in a conversation
+
                             Navigator.pushNamed(
                               context,
                               ChatPage.routename,
@@ -94,9 +115,7 @@ class UserSelectPage extends StatelessWidget {
                                 peerPhoto: photoUrl,
                               ),
                             );
-                          });
-                        }),
-                  );
+                          }));
                 },
               );
             },
