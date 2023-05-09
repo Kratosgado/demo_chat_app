@@ -67,30 +67,7 @@ class UserSelectPage extends StatelessWidget {
                           onTap: () {
                             final currentUserUid =
                                 FirebaseAuth.instance.currentUser!.uid;
-                            final users = [currentUserUid, otherUser];
-
-                            // // Create a new conversation and navigate to ChatPage
-                            // FirebaseFirestore.instance
-                            //     .collection('conversations')
-                            //     .add({
-                            //   'users': users,
-                            //   'otherUserNickname': nickname,
-                            // }).then((docRef) {
-                            //   final conversationId = docRef.id;
-                            //   Navigator.pushNamed(
-                            //     context,
-                            //     ChatPage.routename,
-                            //     arguments: ChatPageArguments(
-                            //       conversationId: conversationId,
-                            //       users: users,
-                            //       otherUserNickname: nickname,
-                            //       peerPhoto: photoUrl,
-                            //     ),
-                            //   );
-                            // }).catchError((error) {
-                            //   // Handle error if conversation creation fails
-                            //   debugPrint('Error creating conversation: $error');
-                            // });
+                            final users = [currentUserUid, otherUserUid];
 
                             // // Create a new conversation and navigate to ChatPage
                             String conversationId;
@@ -104,17 +81,24 @@ class UserSelectPage extends StatelessWidget {
                             }
                             //create a field for the messages collection
                             //will be used to select users in a conversation
-
-                            Navigator.pushNamed(
-                              context,
-                              ChatPage.routename,
-                              arguments: ChatPageArguments(
-                                conversationId: conversationId,
-                                users: users,
-                                otherUserNickname: nickname,
-                                peerPhoto: photoUrl,
-                              ),
-                            );
+                            FirebaseFirestore.instance
+                                .collection('conversations')
+                                .doc(conversationId)
+                                .set({'users': users}).then((_) {
+                              Navigator.pushNamed(
+                                context,
+                                ChatPage.routename,
+                                arguments: ChatPageArguments(
+                                  conversationId: conversationId,
+                                  users: users,
+                                  otherUserNickname: nickname,
+                                  peerPhoto: photoUrl,
+                                ),
+                              );
+                            }).catchError((err) {
+                              debugPrint(
+                                  "*********************\nFirebase Error: $err\n********");
+                            });
                           }));
                 },
               );

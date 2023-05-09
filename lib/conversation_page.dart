@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-import 'package:demo_chat_app/user_select_page.dart'; // Import the ConversationPage
+import 'package:demo_chat_app/user_select_page.dart';
 import 'package:demo_chat_app/chat_page.dart';
 import 'package:demo_chat_app/signin_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class ConversationPage extends StatelessWidget {
   static const routename = '/ConversationPage';
 
-  ConversationPage({super.key});
+  ConversationPage({Key? key}) : super(key: key);
 
   final auth = FirebaseAuth.instance.currentUser;
 
@@ -51,9 +51,15 @@ class ConversationPage extends StatelessWidget {
                     arrayContains: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
                   child: CircularProgressIndicator(),
+                );
+              }
+
+              if (!snapshot.hasData || snapshot.data == null) {
+                return const Center(
+                  child: Text('No conversations found.'),
                 );
               }
 
@@ -67,69 +73,95 @@ class ConversationPage extends StatelessWidget {
                   final users = doc['users'] as List<dynamic>;
                   final otherUserUid = users.firstWhere(
                       (uid) => uid != FirebaseAuth.instance.currentUser!);
-                  Map<String, dynamic>? peerData;
-                  FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(otherUserUid)
-                      .get()
-                      .then((snapshot) {
-                    peerData = snapshot.data();
-                  });
-                  String peerDP = peerData!['photoUrl'];
-                  String peerName = peerData!['nickname'];
 
-                  // Retrieve last message sent in conversation
-                  return StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('conversations')
-                        .doc(conversationId)
-                        .collection(conversationId)
-                        .orderBy('timestamp', descending: true)
-                        .limit(1)
-                        .snapshots(),
+                  return FutureBuilder<DocumentSnapshot>(
+                    future: FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(otherUserUid)
+                        .get(),
                     builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return const CircularProgressIndicator.adaptive();
-                      }
-
-                      final messageDocs = snapshot.data!.docs;
-
-                      if (messageDocs.isEmpty) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
                         return ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(peerDP),
-                          ),
-                          title: Text(peerName),
-                          subtitle: const Text('No messages'),
+                          leading: const CircleAvatar(),
+                          title: const Text('Loading...'),
+                          subtitle: const Text(''),
                         );
                       }
 
-                      final lastMessage = messageDocs[0];
+                      if (!snapshot.hasData || snapshot.data == null) {
+                        return ListTile(
+                          leading: const CircleAvatar(),
+                          title: const Text('User not found'),
+                          subtitle: const Text(''),
+                        );
+                      }
 
-                      return ListTile(
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(peerDP),
-                        ),
-                        title: Text(peerName),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(lastMessage['text'] as String),
-                            Text(
-                              'Sent: ${lastMessage['timestamp'].toString()}',
-                              style: const TextStyle(fontSize: 12),
+                      final peerData =
+                          snapshot.data!.data()! as Map<String, dynamic>;
+                      final peerDP = peerData['photoUrl'];
+                      final peerName = peerData['nickname'];
+
+                      return StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('conversations')
+                            .doc(conversationId)
+                            .collection(conversationId)
+                            .orderBy('timestamp', descending: true)
+                            .limit(1)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(peerDP),
+                              ),
+                              title: Text(peerName),
+                              subtitle: const Text('Loading...'),
+                            );
+                          }
+
+                          if (!snapshot.hasData ||
+                              snapshot.data == null ||
+                              snapshot.data!.docs.isEmpty) {
+                            return ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(peerDP),
+                              ),
+                              title: Text(peerName),
+                              subtitle: const Text('No messages'),
+                            );
+                          }
+                          final messageDocs = snapshot.data!.docs;
+                          final lastMessage = messageDocs[0];
+
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(peerDP),
                             ),
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            ChatPage.routename,
-                            arguments: ChatPageArguments(
-                                conversationId: conversationId,
-                                users: users,
-                                otherUserNickname: peerName,
-                                peerPhoto: peerDP),
+                            title: Text(peerName),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(lastMessage['text'] as String),
+                                Text(
+                                  'Sent: ${lastMessage['timestamp'].toString()}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                ChatPage.routename,
+                                arguments: ChatPageArguments(
+                                  conversationId: conversationId,
+                                  users: users,
+                                  otherUserNickname: peerName,
+                                  peerPhoto: peerDP,
+                                ),
+                              );
+                            },
                           );
                         },
                       );
@@ -147,16 +179,4 @@ class ConversationPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class ConversationPageArguments {
-  final String conversationId;
-  final List<dynamic> users;
-  final String otherUserNickname;
-
-  ConversationPageArguments({
-    required this.conversationId,
-    required this.users,
-    required this.otherUserNickname,
-  });
 }
