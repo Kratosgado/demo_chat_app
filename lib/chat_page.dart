@@ -37,6 +37,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.indigo,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -174,7 +175,7 @@ class _ChatPageState extends State<ChatPage> {
                     .add({
                   'text': text,
                   'sender': currentUser.uid,
-                  'timestamp': Timestamp.now().millisecondsSinceEpoch,
+                  'timestamp': Timestamp.now().seconds,
                 });
                 _textEditingController.clear();
               }
