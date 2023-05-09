@@ -81,18 +81,24 @@ class ConversationPage extends StatelessWidget {
                         .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return ListTile(
-                          leading: const CircleAvatar(),
-                          title: const Text('Loading...'),
-                          subtitle: const Text(''),
+                        return Card(
+                          elevation: 10,
+                          child: const ListTile(
+                            leading: CircleAvatar(),
+                            title: Text('Loading...'),
+                            subtitle: Text(''),
+                          ),
                         );
                       }
 
                       if (!snapshot.hasData || snapshot.data == null) {
-                        return ListTile(
-                          leading: const CircleAvatar(),
-                          title: const Text('User not found'),
-                          subtitle: const Text(''),
+                        return Card(
+                          elevation: 10,
+                          child: const ListTile(
+                            leading: CircleAvatar(),
+                            title: Text('User not found'),
+                            subtitle: Text(''),
+                          ),
                         );
                       }
 
@@ -124,44 +130,53 @@ class ConversationPage extends StatelessWidget {
                           if (!snapshot.hasData ||
                               snapshot.data == null ||
                               snapshot.data!.docs.isEmpty) {
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(peerDP),
+                            return Card(
+                              elevation: 10,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(peerDP),
+                                ),
+                                title: Text(peerName),
+                                subtitle: const Text('No messages'),
                               ),
-                              title: Text(peerName),
-                              subtitle: const Text('No messages'),
                             );
                           }
                           final messageDocs = snapshot.data!.docs;
                           final lastMessage = messageDocs[0];
 
-                          return ListTile(
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(peerDP),
-                            ),
-                            title: Text(peerName),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(lastMessage['text'] as String),
-                                Text(
-                                  'Sent: ${lastMessage['timestamp'].toString()}',
-                                  style: const TextStyle(fontSize: 12),
+                          return Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Card(
+                              elevation: 10,
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(peerDP),
                                 ),
-                              ],
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                ChatPage.routename,
-                                arguments: ChatPageArguments(
-                                  conversationId: conversationId,
-                                  users: users,
-                                  otherUserNickname: peerName,
-                                  peerPhoto: peerDP,
+                                title: Text(peerName),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(lastMessage['text'] as String),
+                                    Text(
+                                      'Sent: ${lastMessage['timestamp'].toString()}',
+                                      style: const TextStyle(fontSize: 12),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    ChatPage.routename,
+                                    arguments: ChatPageArguments(
+                                      conversationId: conversationId,
+                                      users: users,
+                                      otherUserNickname: peerName,
+                                      peerPhoto: peerDP,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           );
                         },
                       );
