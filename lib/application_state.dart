@@ -38,7 +38,7 @@ class ApplicationState extends StateNotifier<dynamic> {
     saveState();
   }
 
-  void signInWithGoogle() async {
+  void signInWithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
@@ -70,6 +70,7 @@ class ApplicationState extends StateNotifier<dynamic> {
         }
         isLoggedIn = true;
         saveState();
+        Navigator.pushReplacementNamed(context, ConversationPage.routename);
       }
     } catch (e) {
       Text(e.toString());

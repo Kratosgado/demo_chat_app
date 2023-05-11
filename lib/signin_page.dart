@@ -68,8 +68,7 @@ class SigninPage extends ConsumerWidget {
                     ],
                   ),
                   onPressed: () {
-                    appState.signInWithGoogle();
-                    Navigator.pushReplacementNamed(context, ConversationPage.routename);
+                    appState.signInWithGoogle(context);
                   },
                 ),
               ),
