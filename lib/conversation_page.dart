@@ -2,12 +2,12 @@ import 'package:demo_chat_app/application_state.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:core';
 
 import 'package:demo_chat_app/user_select_page.dart';
 import 'package:demo_chat_app/chat_page.dart';
 import 'package:demo_chat_app/signin_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class ConversationPage extends ConsumerWidget {
   static const routename = '/ConversationPage';
@@ -138,6 +138,10 @@ class ConversationPage extends ConsumerWidget {
                           }
                           final messageDocs = snapshot.data!.docs;
                           final lastMessage = messageDocs[0];
+                          Timestamp serverTimestamp = lastMessage['timestamp']!;
+                          DateTime servertime = serverTimestamp.toDate();
+
+                          String elapse = calculateTimeDifference(servertime);
 
                           return Padding(
                             padding: const EdgeInsets.all(10.0),
@@ -153,7 +157,7 @@ class ConversationPage extends ConsumerWidget {
                                   children: [
                                     Text(lastMessage['text'] as String),
                                     Text(
-                                      'Sent: ${lastMessage['timestamp'].toString()}',
+                                      'Sent: $elapse',
                                       style: const TextStyle(fontSize: 12),
                                     ),
                                   ],
@@ -188,5 +192,23 @@ class ConversationPage extends ConsumerWidget {
         child: const Icon(Icons.message),
       ),
     );
+  }
+
+  String calculateTimeDifference(DateTime serverTimestamp) {
+    DateTime currentDateTime = DateTime.now();
+    Duration difference = currentDateTime.difference(serverTimestamp);
+
+    if (difference.inSeconds < 60) {
+      return '${difference.inSeconds}s ago';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}m ago';
+    } else if (difference.inHours < 24) {
+      int hours = difference.inHours;
+      int minutes = difference.inMinutes.remainder(60);
+      return '$hours hours $minutes minutes ago';
+    } else {
+      int days = difference.inDays;
+      return '$days days ago';
+    }
   }
 }

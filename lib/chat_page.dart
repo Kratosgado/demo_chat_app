@@ -105,13 +105,10 @@ class _ChatPageState extends State<ChatPage> {
                 final isCurrentUser = sender == currentUser.uid;
 
                 return Align(
-                  alignment: isCurrentUser
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
+                  alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 4.0, horizontal: 8.0),
+                    margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
                     decoration: BoxDecoration(
                       color: isCurrentUser ? Colors.indigo : Colors.amber,
                       borderRadius: BorderRadius.circular(12.0),
@@ -175,7 +172,7 @@ class _ChatPageState extends State<ChatPage> {
                     .add({
                   'text': text,
                   'sender': currentUser.uid,
-                  'timestamp': Timestamp.now().seconds,
+                  'timestamp': FieldValue.serverTimestamp(),
                 });
                 _textEditingController.clear();
               }
