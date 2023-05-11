@@ -1,62 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'conversation_page.dart';
+import 'package:demo_chat_app/application_state.dart';
 
-class SigninPage extends StatelessWidget {
+class SigninPage extends ConsumerWidget {
   SigninPage({super.key});
 
   static const routename = '/signinpage';
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  Future handleSignout() async {}
-
-  void _signInWithGoogle(BuildContext context) async {
-    try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser!.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      final UserCredential userCredential =
-          await _auth.signInWithCredential(credential);
-      final User? user = userCredential.user;
-
-      debugPrint("checking credentials");
-      if (user != null) {
-        //check is already sign up
-        debugPrint("getting info from database");
-        final QuerySnapshot result = await FirebaseFirestore.instance
-            .collection("users")
-            .where('id', isEqualTo: user.uid)
-            .get();
-        final List<DocumentSnapshot> documents = result.docs;
-        if (documents.isEmpty) {
-          //update data to server if new user
-          FirebaseFirestore.instance.collection('users').doc(user.uid).set(
-            {
-              'nickname': user.displayName,
-              'photoUrl': user.photoURL,
-              'id': user.uid,
-            },
-          );
-        }
-        Navigator.pushReplacementNamed(context, ConversationPage.routename);
-      }
-    } catch (e) {
-      Text(e.toString());
-      debugPrint(e.toString());
-    }
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final appState = ref.read(applicationState.notifier);
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -70,8 +28,7 @@ class SigninPage extends StatelessWidget {
           ),
         ),
         child: Card(
-          margin:
-              const EdgeInsets.only(top: 200, bottom: 200, left: 30, right: 30),
+          margin: const EdgeInsets.only(top: 200, bottom: 200, left: 30, right: 30),
           elevation: 20,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -111,7 +68,8 @@ class SigninPage extends StatelessWidget {
                     ],
                   ),
                   onPressed: () {
-                    _signInWithGoogle(context);
+                    appState.signInWithGoogle();
+                    Navigator.pushReplacementNamed(context, ConversationPage.routename);
                   },
                 ),
               ),

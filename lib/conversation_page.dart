@@ -1,3 +1,4 @@
+import 'package:demo_chat_app/application_state.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,9 +6,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:demo_chat_app/user_select_page.dart';
 import 'package:demo_chat_app/chat_page.dart';
 import 'package:demo_chat_app/signin_page.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class ConversationPage extends StatelessWidget {
+class ConversationPage extends ConsumerWidget {
   static const routename = '/ConversationPage';
 
   ConversationPage({Key? key}) : super(key: key);
@@ -15,7 +17,8 @@ class ConversationPage extends StatelessWidget {
   final auth = FirebaseAuth.instance.currentUser;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, ref) {
+    final appState = ref.read(applicationState.notifier);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Conversation Select'),
@@ -23,11 +26,9 @@ class ConversationPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.exit_to_app),
             onPressed: () {
-              FirebaseAuth.instance.signOut();
-              GoogleSignIn().signOut();
-              GoogleSignIn().disconnect();
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  SigninPage.routename, (Route<dynamic> route) => false);
+              appState.handleSignout();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(SigninPage.routename, (Route<dynamic> route) => false);
             },
           ),
         ],
@@ -47,8 +48,7 @@ class ConversationPage extends StatelessWidget {
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('conversations')
-                .where('users',
-                    arrayContains: FirebaseAuth.instance.currentUser!.uid)
+                .where('users', arrayContains: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,14 +71,11 @@ class ConversationPage extends StatelessWidget {
                   final doc = documents[index];
                   final conversationId = doc.id;
                   final users = doc['users'] as List<dynamic>;
-                  final otherUserUid = users.firstWhere(
-                      (uid) => uid != FirebaseAuth.instance.currentUser!);
+                  final otherUserUid =
+                      users.firstWhere((uid) => uid != FirebaseAuth.instance.currentUser!);
 
                   return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(otherUserUid)
-                        .get(),
+                    future: FirebaseFirestore.instance.collection('users').doc(otherUserUid).get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Card(
@@ -102,8 +99,7 @@ class ConversationPage extends StatelessWidget {
                         );
                       }
 
-                      final peerData =
-                          snapshot.data!.data()! as Map<String, dynamic>;
+                      final peerData = snapshot.data!.data()! as Map<String, dynamic>;
                       final peerDP = peerData['photoUrl'];
                       final peerName = peerData['nickname'];
 
@@ -116,8 +112,7 @@ class ConversationPage extends StatelessWidget {
                             .limit(1)
                             .snapshots(),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
                             return ListTile(
                               leading: CircleAvatar(
                                 backgroundImage: NetworkImage(peerDP),
