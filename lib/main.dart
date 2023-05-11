@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'user_select_page.dart';
 import 'signin_page.dart';
 import 'conversation_page.dart';
 import 'chat_page.dart';
+import 'application_state.dart';
 
 import 'settings/settings_service.dart';
 import 'settings/settings_controller.dart';
@@ -22,10 +24,10 @@ void main() async {
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
-  runApp(MyApp(settingsController: settingsController));
+  runApp(ProviderScope(child: MyApp(settingsController: settingsController)));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   final SettingsController settingsController;
   const MyApp({
     super.key,
@@ -33,7 +35,8 @@ class MyApp extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(applicationState.notifier).isLoggedIn;
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -71,8 +74,7 @@ class MyApp extends StatelessWidget {
                   case UserSelectPage.routename:
                     return const UserSelectPage();
                   case ChatPage.routename:
-                    final ChatPageArguments args =
-                        routeSettings.arguments as ChatPageArguments;
+                    final ChatPageArguments args = routeSettings.arguments as ChatPageArguments;
                     return ChatPage(
                       arguments: args,
                     );
