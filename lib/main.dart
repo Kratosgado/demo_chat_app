@@ -14,6 +14,7 @@ import 'settings/settings_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //initialize firebase
   await Firebase.initializeApp();
   final settingsController = SettingsController(SettingsService());
 
@@ -24,9 +25,12 @@ void main() async {
   // Run the app and pass in the SettingsController. The app listens to the
   // SettingsController for changes, then passes it further down to the
   // SettingsView.
-  runApp(ProviderScope(child: MyApp(settingsController: settingsController)));
+  runApp(
+      //ProviderScope from flutterRiverpod to enable state management
+      ProviderScope(child: MyApp(settingsController: settingsController)));
 }
 
+//main Widget that contains deep linking navigation
 class MyApp extends ConsumerWidget {
   final SettingsController settingsController;
   const MyApp({
@@ -36,6 +40,7 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //get isLoggedIn value from the applicationSatae
     final isLoggedIn = ref.watch(applicationState.notifier).isLoggedIn;
     return AnimatedBuilder(
       animation: settingsController,
@@ -81,7 +86,9 @@ class MyApp extends ConsumerWidget {
                   case ConversationPage.routename:
                     return ConversationPage();
                   default:
+                    //check if logged in
                     if (isLoggedIn) {
+                      //navigate to conversatio page if logged in
                       return ConversationPage();
                     }
                     return SigninPage();
