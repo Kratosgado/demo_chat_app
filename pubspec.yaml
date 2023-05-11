@@ -37,6 +37,8 @@ dependencies:
   google_sign_in: ^5.2.2
   fluttertoast: ^8.2.1
   flutter_riverpod:
+  shared_preferences:
+  path_provider:
 
 dev_dependencies:
   flutter_test:
