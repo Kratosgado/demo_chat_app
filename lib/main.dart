@@ -81,6 +81,9 @@ class MyApp extends ConsumerWidget {
                   case ConversationPage.routename:
                     return ConversationPage();
                   default:
+                    if (isLoggedIn) {
+                      return ConversationPage();
+                    }
                     return SigninPage();
                 }
               },
