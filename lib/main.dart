@@ -23,7 +23,7 @@ void main() async {
   await settingsController.loadSettings();
 
   // Run the app and pass in the SettingsController. The app listens to the
-  // SettingsController for changes, then passes it further down to the
+  // SettingsController for changes, then passes it further down to th
   // SettingsView.
   runApp(
       //ProviderScope from flutterRiverpod to enable state management
@@ -41,7 +41,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //get isLoggedIn value from the applicationSatae
-    final isLoggedIn = ref.watch(applicationState.notifier).isLoggedIn;
+    final isLoggedIn = ref.watch(applicationState);
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {

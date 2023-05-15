@@ -16,25 +16,29 @@ final applicationState = StateNotifierProvider<ApplicationState, dynamic>((ref) 
 class ApplicationState extends StateNotifier<dynamic> {
   ApplicationState(state) : super(state);
 
-  bool isLoggedIn = false;
+  bool? isLoggedIn;
+
   final FirebaseAuth auth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
   Future<void> loadState() async {
     final prefs = await SharedPreferences.getInstance();
     isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    state = isLoggedIn;
+    debugPrint("loaded: $isLoggedIn ***************");
   }
 
   Future<void> saveState() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', isLoggedIn);
+    await prefs.setBool('isLoggedIn', state);
+    debugPrint("saved: $state *************");
   }
 
   Future handleSignout() async {
     await auth.signOut();
     await googleSignIn.signOut();
     await googleSignIn.disconnect();
-    isLoggedIn = false;
+    state = false;
     saveState();
   }
 
@@ -68,7 +72,7 @@ class ApplicationState extends StateNotifier<dynamic> {
             },
           );
         }
-        isLoggedIn = true;
+        state = true;
         saveState();
         Navigator.pushReplacementNamed(context, ConversationPage.routename);
       }
