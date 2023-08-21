@@ -1,37 +1,14 @@
-import 'package:demo_chat_app/conversation_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:demo_chat_app/chat_page/chat_message.dart'; // Import the ChatMessage class
 
-class ChatPage extends StatefulWidget {
+class ChatPage extends StatelessWidget {
   static const routename = '/chatpage';
 
   final ChatPageArguments arguments;
 
   const ChatPage({required this.arguments, super.key});
-
-  @override
-  State<ChatPage> createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
-  final TextEditingController _textEditingController = TextEditingController();
-  var peerName, peerDP, peerUid, conversationId, users;
-
-  @override
-  void initState() {
-    super.initState();
-    // Get and store passed arguments from the user select page
-    // Will be used to create conversation
-    peerName = widget.arguments.otherUserNickname;
-    peerDP = widget.arguments.peerPhoto;
-    peerUid = widget.arguments.users[1];
-    conversationId = widget.arguments.conversationId;
-    users = widget.arguments.users;
-  }
-
-  // Get the current user id
-  final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +24,10 @@ class _ChatPageState extends State<ChatPage> {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: NetworkImage(peerDP!),
+              backgroundImage: NetworkImage(arguments.peerPhoto),
             ),
             const SizedBox(width: 8.0),
-            Text(peerName!),
+            Text(arguments.otherUserNickname),
           ],
         ),
       ),
@@ -75,14 +52,13 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  //a widget to display already sent messages
   Widget buildMessages() {
     return Expanded(
-      child: StreamBuilder<QuerySnapshot>(
+      child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirebaseFirestore.instance
             .collection('conversations')
-            .doc(conversationId)
-            .collection(conversationId)
+            .doc(arguments.conversationId)
+            .collection(arguments.conversationId)
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -99,28 +75,15 @@ class _ChatPageState extends State<ChatPage> {
               reverse: true,
               itemCount: documents.length,
               itemBuilder: (context, index) {
-                final doc = documents[index];
-                final sender = doc['sender'] as String;
-                final text = doc['text'] as String;
-                final isCurrentUser = sender == currentUser.uid;
+                final message = Message.fromJson(documents[index].id, documents[index].data());
+                // final sender = doc['sender'] as String;
+                // final text = doc['text'] as String;
+                final isCurrentUser = message.senderUid == FirebaseAuth.instance.currentUser!.uid;
+                // final message = Message(text: text, timestamp: DateTime.now(), senderUid: sender);
 
-                return Align(
-                  alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    margin: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                    decoration: BoxDecoration(
-                      color: isCurrentUser ? Colors.indigo : Colors.amber,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Text(
-                      text,
-                      style: TextStyle(
-                        color: isCurrentUser ? Colors.white : Colors.black,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
+                return ChatMessage(
+                  message: message,
+                  isCurrentUser: isCurrentUser,
                 );
               },
             ),
@@ -130,8 +93,9 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  //a widget to that will be used to enter messages
   Widget buildInput() {
+    final TextEditingController textEditingController = TextEditingController();
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Row(
@@ -144,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           Expanded(
             child: TextField(
-              controller: _textEditingController,
+              controller: textEditingController,
               decoration: InputDecoration(
                 icon: IconButton(
                   icon: const Icon(Icons.emoji_emotions),
@@ -163,18 +127,21 @@ class _ChatPageState extends State<ChatPage> {
           IconButton(
             icon: const Icon(Icons.send_rounded),
             onPressed: () {
-              final text = _textEditingController.text.trim();
+              final text = textEditingController.text.trim();
               if (text.isNotEmpty) {
+                final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
+                final message = Message(
+                  text: text,
+                  senderUid: currentUserUid,
+                  timestamp: FieldValue.serverTimestamp(),
+                ).toJson();
+
                 FirebaseFirestore.instance
                     .collection('conversations')
-                    .doc(conversationId)
-                    .collection(conversationId)
-                    .add({
-                  'text': text,
-                  'sender': currentUser.uid,
-                  'timestamp': FieldValue.serverTimestamp(),
-                });
-                _textEditingController.clear();
+                    .doc(arguments.conversationId)
+                    .collection(arguments.conversationId)
+                    .add(message);
+                textEditingController.clear();
               }
             },
           ),

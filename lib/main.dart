@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'user_select_page.dart';
 import 'signin_page.dart';
-import 'conversation_page.dart';
+import 'conversation/conversation_page.dart';
 import 'chat_page/chat_page.dart';
 import 'application_state.dart';
 

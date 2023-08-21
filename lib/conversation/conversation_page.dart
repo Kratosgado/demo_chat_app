@@ -73,14 +73,6 @@ class ConversationPage extends ConsumerWidget {
                   final users = doc['users'] as List<dynamic>;
                   // get other user's uid
                   final otherUserUid = users.firstWhere((uid) => uid != currentUser.uid);
-                  // final otherUserIndex = users.indexWhere((uid) => uid != currentUser.uid);
-
-                  // if (otherUserIndex == -1) {
-                  //   // Handle the case where the other user's uid is not found
-                  //   return const SizedBox.shrink(); // Return an empty widget or handle accordingly
-                  // }
-
-                  // final otherUserUid = users[otherUserIndex];
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance.collection('users').doc(otherUserUid).get(),
@@ -147,9 +139,8 @@ class ConversationPage extends ConsumerWidget {
                           final messageDocs = snapshot.data!.docs;
                           final lastMessage = messageDocs[0];
                           Timestamp serverTimestamp = lastMessage['timestamp']!;
-                          DateTime servertime = serverTimestamp.toDate();
 
-                          String elapse = calculateTimeDifference(servertime);
+                          String elapse = calculateTimeDifference(serverTimestamp);
 
                           return Card(
                             elevation: 10,
@@ -199,9 +190,10 @@ class ConversationPage extends ConsumerWidget {
     );
   }
 
-  String calculateTimeDifference(DateTime serverTimestamp) {
+  String calculateTimeDifference(Timestamp serverTimestamp) {
+    DateTime servertime = serverTimestamp.toDate();
     DateTime currentDateTime = DateTime.now();
-    Duration difference = currentDateTime.difference(serverTimestamp);
+    Duration difference = currentDateTime.difference(servertime);
 
     if (difference.inSeconds < 60) {
       return '${difference.inSeconds}s ago';
