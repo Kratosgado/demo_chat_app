@@ -21,6 +21,7 @@ dependencies:
   shared_preferences:
   path_provider:
   flutter_launcher_icons: ^0.13.1
+  sqflite: ^2.3.0
 
 flutter_launcher_icons:
   android: "launcher_icon"
