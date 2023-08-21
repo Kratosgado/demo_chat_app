@@ -78,9 +78,9 @@ class ConversationPage extends ConsumerWidget {
                     future: FirebaseFirestore.instance.collection('users').doc(otherUserUid).get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Card(
+                        return const Card(
                           elevation: 10,
-                          child: const ListTile(
+                          child: ListTile(
                             leading: CircleAvatar(),
                             title: Text('Loading...'),
                             subtitle: Text(''),
@@ -89,9 +89,9 @@ class ConversationPage extends ConsumerWidget {
                       }
 
                       if (!snapshot.hasData || snapshot.data == null) {
-                        return Card(
+                        return const Card(
                           elevation: 10,
-                          child: const ListTile(
+                          child: ListTile(
                             leading: CircleAvatar(),
                             title: Text('User not found'),
                             subtitle: Text(''),
@@ -143,38 +143,35 @@ class ConversationPage extends ConsumerWidget {
 
                           String elapse = calculateTimeDifference(servertime);
 
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Card(
-                              elevation: 10,
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage: NetworkImage(peerDP),
-                                ),
-                                title: Text(peerName),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(lastMessage['text'] as String),
-                                    Text(
-                                      'Sent: $elapse',
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    ChatPage.routename,
-                                    arguments: ChatPageArguments(
-                                      conversationId: conversationId,
-                                      users: users,
-                                      otherUserNickname: peerName,
-                                      peerPhoto: peerDP,
-                                    ),
-                                  );
-                                },
+                          return Card(
+                            elevation: 10,
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundImage: NetworkImage(peerDP),
                               ),
+                              title: Text(peerName),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(lastMessage['text'] as String),
+                                  Text(
+                                    'Sent: $elapse',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  ChatPage.routename,
+                                  arguments: ChatPageArguments(
+                                    conversationId: conversationId,
+                                    users: users,
+                                    otherUserNickname: peerName,
+                                    peerPhoto: peerDP,
+                                  ),
+                                );
+                              },
                             ),
                           );
                         },

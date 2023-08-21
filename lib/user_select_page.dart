@@ -51,8 +51,7 @@ class UserSelectPage extends StatelessWidget {
                   return Card(
                       color: Colors.white,
                       elevation: 10,
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
+                      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                       child: ListTile(
                           leading: CircleAvatar(
                             backgroundImage: NetworkImage(photoUrl),
@@ -65,19 +64,15 @@ class UserSelectPage extends StatelessWidget {
                             ),
                           ),
                           onTap: () {
-                            final currentUserUid =
-                                FirebaseAuth.instance.currentUser!.uid;
+                            final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
                             final users = [currentUserUid, otherUserUid];
 
                             // // Create a new conversation and navigate to ChatPage
                             String conversationId;
-                            if (currentUserUid.hashCode <=
-                                otherUserUid.hashCode) {
-                              conversationId =
-                                  '$currentUserUid - $otherUserUid';
+                            if (currentUserUid.hashCode <= otherUserUid.hashCode) {
+                              conversationId = '$currentUserUid - $otherUserUid';
                             } else {
-                              conversationId =
-                                  '$otherUserUid - $currentUserUid';
+                              conversationId = '$otherUserUid - $currentUserUid';
                             }
                             //create a field for the messages collection
                             //will be used to select users in a conversation
@@ -96,8 +91,7 @@ class UserSelectPage extends StatelessWidget {
                                 ),
                               );
                             }).catchError((err) {
-                              debugPrint(
-                                  "*********************\nFirebase Error: $err\n********");
+                              debugPrint("*********************\nFirebase Error: $err\n********");
                             });
                           }));
                 },
