@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, ConversationPage.routename);
+            Navigator.of(context).pop();
           },
         ),
         title: Row(

@@ -48,8 +48,9 @@ class UserSelectPage extends StatelessWidget {
                   final nickname = otherUser['nickname'] as String;
                   final photoUrl = otherUser['photoUrl'] as String;
 
-                  if (otherUserUid == FirebaseAuth.instance.currentUser!.uid)
+                  if (otherUserUid == FirebaseAuth.instance.currentUser!.uid) {
                     return const SizedBox.shrink();
+                  }
 
                   return Card(
                       color: Colors.white,
@@ -83,7 +84,7 @@ class UserSelectPage extends StatelessWidget {
                                 .collection('conversations')
                                 .doc(conversationId)
                                 .set({'users': users}).then((_) {
-                              Navigator.pushNamed(
+                              Navigator.pushReplacementNamed(
                                 context,
                                 ChatPage.routename,
                                 arguments: ChatPageArguments(
