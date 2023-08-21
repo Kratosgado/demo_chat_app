@@ -48,6 +48,9 @@ class UserSelectPage extends StatelessWidget {
                   final nickname = otherUser['nickname'] as String;
                   final photoUrl = otherUser['photoUrl'] as String;
 
+                  if (otherUserUid == FirebaseAuth.instance.currentUser!.uid)
+                    return const SizedBox.shrink();
+
                   return Card(
                       color: Colors.white,
                       elevation: 10,

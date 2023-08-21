@@ -14,7 +14,7 @@ class ConversationPage extends ConsumerWidget {
 
   ConversationPage({Key? key}) : super(key: key);
 
-  final auth = FirebaseAuth.instance.currentUser;
+  final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context, ref) {
@@ -48,7 +48,7 @@ class ConversationPage extends ConsumerWidget {
           child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('conversations')
-                .where('users', arrayContains: FirebaseAuth.instance.currentUser!.uid)
+                .where('users', arrayContains: currentUser.uid)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -71,8 +71,16 @@ class ConversationPage extends ConsumerWidget {
                   final doc = documents[index];
                   final conversationId = doc.id;
                   final users = doc['users'] as List<dynamic>;
-                  final otherUserUid =
-                      users.firstWhere((uid) => uid != FirebaseAuth.instance.currentUser!);
+                  // get other user's uid
+                  final otherUserUid = users.firstWhere((uid) => uid != currentUser.uid);
+                  // final otherUserIndex = users.indexWhere((uid) => uid != currentUser.uid);
+
+                  // if (otherUserIndex == -1) {
+                  //   // Handle the case where the other user's uid is not found
+                  //   return const SizedBox.shrink(); // Return an empty widget or handle accordingly
+                  // }
+
+                  // final otherUserUid = users[otherUserIndex];
 
                   return FutureBuilder<DocumentSnapshot>(
                     future: FirebaseFirestore.instance.collection('users').doc(otherUserUid).get(),
