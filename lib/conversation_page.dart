@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:core';
 
 import 'package:demo_chat_app/user_select_page.dart';
-import 'package:demo_chat_app/chat_page.dart';
+import 'package:demo_chat_app/chat_page/chat_page.dart';
 import 'package:demo_chat_app/signin_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
