@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:demo_chat_app/chat_page/chat_page.dart';
-import 'package:fluttertoast/fluttertoast.dart'; // Import the ChatPage
 
 class UserSelectPage extends StatelessWidget {
   const UserSelectPage({super.key});

@@ -41,17 +41,6 @@ Widget buildConversationList(context) {
           return FutureBuilder<DocumentSnapshot>(
             future: FirebaseFirestore.instance.collection('users').doc(otherUserUid).get(),
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Card(
-                  elevation: 10,
-                  child: ListTile(
-                    leading: CircleAvatar(),
-                    title: Text('Loading...'),
-                    subtitle: Text(''),
-                  ),
-                );
-              }
-
               if (!snapshot.hasData || snapshot.data == null) {
                 return const Card(
                   elevation: 10,
