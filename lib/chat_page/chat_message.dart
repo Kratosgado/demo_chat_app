@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class Message {
   final String? id;
   final String text;
-  final FieldValue timestamp;
+  final Timestamp timestamp;
   final String senderUid;
   final String? imageUrl; // Optional property for image URL
   final String? emoji; // Optional property for emoji
@@ -74,7 +74,7 @@ class ChatMessage extends StatelessWidget {
             ),
             const SizedBox(height: 4.0),
             Text(
-              calculateTimeDifference(message.timestamp as Timestamp),
+              calculateTimeDifference(message.timestamp),
               style: TextStyle(
                 color: isCurrentUser ? Colors.white : Colors.black,
                 fontSize: 12.0,

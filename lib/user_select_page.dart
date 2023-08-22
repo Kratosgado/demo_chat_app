@@ -1,3 +1,4 @@
+import 'package:demo_chat_app/chat_page/chat_props';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -87,7 +88,7 @@ class UserSelectPage extends StatelessWidget {
                               Navigator.pushReplacementNamed(
                                 context,
                                 ChatPage.routename,
-                                arguments: ChatPageArguments(
+                                arguments: ChatProps(
                                   conversationId: conversationId,
                                   users: users,
                                   otherUserNickname: nickname,

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:demo_chat_app/chat_page/chat_message.dart'; // Import the ChatMessage class
+import 'package:demo_chat_app/chat_page/chat_message.dart';
+
+import 'chat_props'; // Import the ChatMessage class
 
 class ChatPage extends StatelessWidget {
   static const routename = '/chatpage';
 
-  final ChatPageArguments arguments;
+  final ChatProps arguments;
 
   const ChatPage({required this.arguments, super.key});
 
@@ -133,7 +135,7 @@ class ChatPage extends StatelessWidget {
                 final message = Message(
                   text: text,
                   senderUid: currentUserUid,
-                  timestamp: FieldValue.serverTimestamp(),
+                  timestamp: Timestamp.now(),
                 ).toJson();
 
                 FirebaseFirestore.instance
@@ -149,18 +151,4 @@ class ChatPage extends StatelessWidget {
       ),
     );
   }
-}
-
-class ChatPageArguments {
-  final String conversationId;
-  final List<dynamic> users;
-  final String otherUserNickname;
-  final String peerPhoto;
-
-  ChatPageArguments({
-    required this.conversationId,
-    required this.users,
-    required this.otherUserNickname,
-    required this.peerPhoto,
-  });
 }

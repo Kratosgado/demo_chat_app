@@ -4,8 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import 'conversation/conversation_page.dart';
-import 'package:demo_chat_app/application_state.dart';
+import 'conversation/conversation_view.dart';
+import 'package:demo_chat_app/utils/application_state.dart';
 
 class SigninPage extends ConsumerWidget {
   SigninPage({super.key});

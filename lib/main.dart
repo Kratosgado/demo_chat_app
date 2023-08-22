@@ -1,12 +1,13 @@
+import 'package:demo_chat_app/chat_page/chat_props';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'user_select_page.dart';
 import 'signin_page.dart';
-import 'conversation/conversation_page.dart';
+import 'conversation/conversation_view.dart';
 import 'chat_page/chat_page.dart';
-import 'application_state.dart';
+import 'utils/application_state.dart';
 
 import 'settings/settings_service.dart';
 import 'settings/settings_controller.dart';
@@ -83,7 +84,7 @@ class MyApp extends ConsumerWidget {
                   case UserSelectPage.routename:
                     return const UserSelectPage();
                   case ChatPage.routename:
-                    final ChatPageArguments args = routeSettings.arguments as ChatPageArguments;
+                    final ChatProps args = routeSettings.arguments as ChatProps;
                     return ChatPage(
                       arguments: args,
                     );
