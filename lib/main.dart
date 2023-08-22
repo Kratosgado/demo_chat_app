@@ -1,4 +1,3 @@
-import 'package:demo_chat_app/chat_page/chat_props';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'user_select_page.dart';
 import 'signin_page.dart';
 import 'conversation/conversation_view.dart';
-import 'chat_page/chat_page.dart';
+import 'chat_page/chat_view.dart';
+import 'chat_page/chat_props.dart';
 import 'utils/application_state.dart';
 
 import 'settings/settings_service.dart';
@@ -83,20 +83,20 @@ class MyApp extends ConsumerWidget {
                     return SettingsView(controller: settingsController);
                   case UserSelectPage.routename:
                     return const UserSelectPage();
-                  case ChatPage.routename:
+                  case ChatView.routename:
                     final ChatProps args = routeSettings.arguments as ChatProps;
-                    return ChatPage(
-                      arguments: args,
+                    return ChatView(
+                      chatprops: args,
                     );
                   case ConversationPage.routename:
-                    return ConversationPage();
+                    return const ConversationPage();
                   default:
                     //check if logged in
                     if (isLoggedIn) {
                       //navigate to conversatio page if logged in
-                      return ConversationPage();
+                      return const ConversationPage();
                     }
-                    return SigninPage();
+                    return const SigninPage();
                 }
               },
             );

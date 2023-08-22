@@ -1,4 +1,20 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+
+Future<String?> uploadImage(File imageFile) async {
+  final storageRef =
+      FirebaseStorage.instance.ref().child('images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+  final uploadTask = storageRef.putFile(imageFile);
+
+  final snapshot = await uploadTask;
+  if (snapshot.state == TaskState.success) {
+    final downloadUrl = await storageRef.getDownloadURL();
+    return downloadUrl;
+  }
+  return null;
+}
 
 String calculateTimeDifference(Timestamp serverTimestamp) {
   DateTime servertime = serverTimestamp.toDate();

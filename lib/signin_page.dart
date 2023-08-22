@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:demo_chat_app/utils/application_state.dart';
 
 class SigninPage extends ConsumerWidget {
-  SigninPage({super.key});
+  const SigninPage({super.key});
 
   static const routename = '/signinpage';
 

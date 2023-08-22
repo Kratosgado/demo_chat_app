@@ -1,8 +1,8 @@
-import 'package:demo_chat_app/chat_page/chat_props';
+import 'package:demo_chat_app/chat_page/chat_props.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:demo_chat_app/chat_page/chat_page.dart';
+import 'package:demo_chat_app/chat_page/chat_view.dart';
 
 class UserSelectPage extends StatelessWidget {
   const UserSelectPage({super.key});
@@ -71,7 +71,7 @@ class UserSelectPage extends StatelessWidget {
                             final currentUserUid = FirebaseAuth.instance.currentUser!.uid;
                             final users = [currentUserUid, otherUserUid];
 
-                            // // Create a new conversation and navigate to ChatPage
+                            // // Create a new conversation and navigate to ChatView
                             String conversationId;
                             if (currentUserUid.hashCode <= otherUserUid.hashCode) {
                               conversationId = '$currentUserUid - $otherUserUid';
@@ -86,7 +86,7 @@ class UserSelectPage extends StatelessWidget {
                                 .set({'users': users}).then((_) {
                               Navigator.pushReplacementNamed(
                                 context,
-                                ChatPage.routename,
+                                ChatView.routename,
                                 arguments: ChatProps(
                                   conversationId: conversationId,
                                   users: users,

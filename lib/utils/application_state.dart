@@ -74,7 +74,9 @@ class ApplicationState extends StateNotifier<dynamic> {
         }
         state = true;
         saveState();
-        Navigator.pushReplacementNamed(context, ConversationPage.routename);
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, ConversationPage.routename);
+        }
       }
     } catch (e) {
       Text(e.toString());

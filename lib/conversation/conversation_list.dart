@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../chat_page/chat_page.dart';
-import '../chat_page/chat_props';
+import '../chat_page/chat_view.dart';
+import '../chat_page/chat_props.dart';
 import '../utils/functions.dart';
 
 Widget buildConversationList(context) {
@@ -87,7 +87,7 @@ Widget buildConversationList(context) {
                         onTap: () {
                           Navigator.pushNamed(
                             context,
-                            ChatPage.routename,
+                            ChatView.routename,
                             arguments: ChatProps(
                               conversationId: conversationId,
                               users: users,
@@ -125,7 +125,7 @@ Widget buildConversationList(context) {
                       onTap: () {
                         Navigator.pushNamed(
                           context,
-                          ChatPage.routename,
+                          ChatView.routename,
                           arguments: ChatProps(
                             conversationId: conversationId,
                             users: users,

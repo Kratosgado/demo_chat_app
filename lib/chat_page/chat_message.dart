@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/functions.dart';
+
 class Message {
   final String? id;
   final String text;
@@ -65,13 +67,17 @@ class ChatMessage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              message.text,
-              style: TextStyle(
-                color: isCurrentUser ? Colors.white : Colors.black,
-                fontSize: 16.0,
+            if (message.imageUrl != null) Image.network(message.imageUrl!),
+            if (message.text.isNotEmpty) ...[
+              const SizedBox(height: 4.0),
+              Text(
+                message.text,
+                style: TextStyle(
+                  color: isCurrentUser ? Colors.white : Colors.black,
+                  fontSize: 16.0,
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: 4.0),
             Text(
               calculateTimeDifference(message.timestamp),
@@ -84,24 +90,5 @@ class ChatMessage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-String calculateTimeDifference(Timestamp serverTimestamp) {
-  DateTime servertime = serverTimestamp.toDate();
-  DateTime currentDateTime = DateTime.now();
-  Duration difference = currentDateTime.difference(servertime);
-
-  if (difference.inSeconds < 60) {
-    return '${difference.inSeconds}s ago';
-  } else if (difference.inMinutes < 60) {
-    return '${difference.inMinutes}m ago';
-  } else if (difference.inHours < 24) {
-    int hours = difference.inHours;
-    int minutes = difference.inMinutes.remainder(60);
-    return '$hours hours $minutes minutes ago';
-  } else {
-    int days = difference.inDays;
-    return '$days days ago';
   }
 }

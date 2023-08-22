@@ -22,6 +22,9 @@ dependencies:
   path_provider:
   flutter_launcher_icons: ^0.13.1
   sqflite: ^2.3.0
+  image_picker: ^1.0.2
+  firebase_storage: ^11.2.6
+  emoji_picker_flutter: ^1.6.1
 
 flutter_launcher_icons:
   android: "launcher_icon"
