@@ -19,12 +19,13 @@ dependencies:
   fluttertoast: ^8.2.1
   flutter_riverpod:
   shared_preferences:
-  path_provider:
+  path_provider: ^2.1.0
   flutter_launcher_icons: ^0.13.1
   sqflite: ^2.3.0
   image_picker: ^1.0.2
   firebase_storage: ^11.2.6
   emoji_picker_flutter: ^1.6.1
+  isar_flutter_libs: ^3.1.0+1
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -54,6 +55,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
